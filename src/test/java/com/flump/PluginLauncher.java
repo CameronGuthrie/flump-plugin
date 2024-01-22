@@ -9,7 +9,13 @@ public class PluginLauncher
 	{
 //		ExternalPluginManager.loadBuiltin(ExamplePlugin.class);
 //		ExternalPluginManager.loadBuiltin(DetectCombatPlugin.class);
-		ExternalPluginManager.loadBuiltin(MousePlugin.class);
+		ExternalPluginManager.loadBuiltin(TestPlugin.class);
+
+
+//		PrintStream fileStream = new PrintStream("C:\\Users\\Admin\\Desktop\\RuneLite_Log.txt");
+//		System.setOut(fileStream);
+//		System.out.println("starting");
+
 		RuneLite.main(args);
 	}
 }

@@ -1,5 +1,7 @@
 package com.flump;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.Overlay;
@@ -11,31 +13,35 @@ import java.awt.*;
 
 import javax.inject.Inject;
 
-class MousePluginOverlay extends Overlay {
+class MouseControllerOverlay extends Overlay {
 
     private final Client client;
-    private final MousePlugin plugin;
+
+    private final MouseController controller;
 
     @Inject
-    private MousePluginOverlay(Client client, MousePlugin plugin){
+    private MouseControllerOverlay(Client client, MouseController controller){
         this.client = client;
-        this.plugin = plugin;
+        this.controller = controller;
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ABOVE_WIDGETS);
         setPriority(OverlayPriority.HIGH);
+
+        System.out.println("MouseControllerOverlay using MouseController: " + controller.hashCode());
     }
 
     @Override
     public Dimension render(Graphics2D graphics) {
 
-        Point coords = plugin.getMouseCoords();
+        Point coords = client.getMouseCanvasPosition();
+        Color drawColor = controller.getDrawColor();
 
-        if (coords !=null) {
-            renderMouse(graphics, coords, plugin.getDrawColor());
+        if (drawColor == Color.YELLOW) {
+            System.out.println("DRAWING YELLOW!");
         }
 
-        if (coords == null) {
-            return null;
+        if (coords !=null) {
+            renderMouse(graphics, coords, drawColor);
         }
 
         return null;

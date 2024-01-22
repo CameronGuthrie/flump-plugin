@@ -5,18 +5,10 @@ import net.runelite.api.events.*;
 import net.runelite.client.eventbus.Subscribe;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-
-import java.awt.Graphics2D;
-
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-
 import net.runelite.client.util.ColorUtil;
-
 
 @Slf4j
 @PluginDescriptor(
@@ -41,7 +33,95 @@ public class DetectCombatPlugin extends Plugin {
         log.info("Custom plugin stopped!");
     }
 
-    // Swap prayers on game tick
+    // check for animation
+    @Subscribe
+    public void onAnimationChanged(AnimationChanged event) {
+
+        final Actor actor = event.getActor();
+        final int anim = actor.getAnimation();
+
+        if (actor.getName() == null || actor instanceof Player){
+            return;
+        }
+
+        switch(anim) {
+            case (2656):
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag("Protect MAGE", Color.BLUE), "");
+                break;
+            case (2652):
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag("Protect RANGED", Color.GREEN), "");
+                break;
+            case (2655):
+                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag("Protect MELEE", Color.RED), "");
+                break;
+            case (-1):
+                break;
+            default:
+                sendMessage(actor.getName() + " is playing animation with id " + anim);
+                break;
+        }
+
+    }
+
+    // Check for projectiles (will be the fallback if animation check fails)
+    @Subscribe
+    public void onProjectileMoved(ProjectileMoved event) {
+
+        final Projectile projectile = event.getProjectile();
+
+        if (projectile.getInteracting().getName() == null) {
+            sendMessage("Projectile " + projectile.getId() + " is firing at local point " + projectile.getTarget().toString());
+        }
+
+        sendMessage("Projectile " + projectile.getId() + " is firing at " + projectile.getInteracting().getName());
+
+        int id = projectile.getId();
+
+    }
+
+    // CHECK IF ANYTHING IS INTERACTING ON THE CLIENT
+    @Subscribe
+    public void onInteractingChanged(InteractingChanged event) {
+
+        Actor source = event.getSource();
+        Actor target = event.getTarget();
+
+        if (client.getLocalPlayer() == null || target == null || source == null) {
+            return;
+        }
+
+        // If the local player is the source
+        if (source.equals(client.getLocalPlayer())) {
+            System.out.println("You interact with " + target.getName() + ".");
+            sendMessage("You interact with " + target.getName() + ".");
+        } else if (target.equals(client.getLocalPlayer())) { // If the local player is the target
+            System.out.println(source.getName() + " is interacting with you.");
+            sendMessage(source.getName() + " is interacting  with you.");
+        }
+
+    }
+
+    private void sendMessage(String message) {
+        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(message, Color.BLACK), "");
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Swap prayers on game tick
 //    @Subscribe
 //    public void onGameTick(GameTick event) {
 //        if (swapMage) {
@@ -62,44 +142,24 @@ public class DetectCombatPlugin extends Plugin {
 //        }
 //    }
 
-    // check for animation
-    @Subscribe
-    public void onAnimationChanged(AnimationChanged event) {
 
-        if (event.getActor().getName() == null || event.getActor() instanceof Player){
-            return;
-        }
 
-        int animID = event.getActor().getAnimation();
-        switch(animID) {
-            case (2656):
-                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag("Protect MAGE", Color.BLUE), "");
-                break;
-            case (2652):
-                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag("Protect RANGED", Color.GREEN), "");
-                break;
-            case (2655):
-                client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag("Protect MELEE", Color.RED), "");
-                break;
-            case (-1):
-                break;
-            default:
-                sendMessage(event.getActor().getName() + " is playing animation with id " + event.getActor().getAnimation());
-                break;
-        }
-    }
 
-    // Check for projectiles (fallback if animation check fails)
-    @Subscribe
-    public void onProjectileMoved(ProjectileMoved event) {
 
-        if (event.getProjectile().getInteracting().getName() == null) {
-            sendMessage("Projectile " + event.getProjectile().getId() + " is firing at local point " + event.getProjectile().getTarget().toString());
-        }
 
-        sendMessage("Projectile " + event.getProjectile().getId() + " is firing at " + event.getProjectile().getInteracting().getName());
 
-        int id = event.getProjectile().getId();
+
+
+
+
+
+
+
+
+
+
+
+
 
 //        switch (id) {
 //            case (1339):
@@ -115,26 +175,25 @@ public class DetectCombatPlugin extends Plugin {
 //            default:
 //                break;
 //        }
-    }
 
-    // CHECK IF ANYTHING IS INTERACTING ON THE CLIENT
-    @Subscribe
-    public void onInteractingChanged(InteractingChanged event) {
 
-        // If the local player is the source
-        if (event.getSource().equals(client.getLocalPlayer())) {
 
-            System.out.println(event.getSource().getName() + " is interacting with " + event.getTarget().getName());
-            sendMessage(event.getSource().getName() + " is interacting with " + event.getTarget().getName());
 
-        } else if (event.getTarget().equals(client.getLocalPlayer())) { // If the local player is the target
 
-            System.out.println(event.getSource().getName() + " is interacting with " + event.getTarget().getName());
-            sendMessage(event.getSource().getName() + " is interacting with " + event.getTarget().getName());
 
-        }
 
-    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    public int getMillis() {
 //           return (int) (Math.random() * config.randLow() + config.randHigh());
@@ -151,11 +210,3 @@ public class DetectCombatPlugin extends Plugin {
 //        graphics.draw(new Rectangle(baseX, mouseY, canvasW, 1));
 //        graphics.draw(new Rectangle(mouseX, baseY, 1, canvasH));
 //    }
-
-    private void sendMessage(String message) {
-        client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", ColorUtil.wrapWithColorTag(message, Color.BLACK), "");
-    }
-
-
-
-}
