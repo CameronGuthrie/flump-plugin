@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.client.input.MouseListener;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.awt.*;
@@ -20,7 +19,7 @@ public class MouseController implements MouseListener {
     @Inject
     private MouseController(Client client) {
         this.client = client;
-        System.out.println("MouseController instance created: " + this.hashCode());
+//        System.out.println("MouseController instance created: " + this.hashCode());
     }
 
     @Getter
@@ -157,15 +156,6 @@ public class MouseController implements MouseListener {
         Thread.sleep(5);
     }
 
-    private Point randomRectanglePoint(Rectangle rect) {
-        Random rand = new Random();
-
-        int x = rect.x + rand.nextInt(rect.width);
-        int y = rect.y + rand.nextInt(rect.height);
-
-        return new Point(x, y);
-    }
-
     @Override
     public MouseEvent mouseClicked(MouseEvent mouseEvent) {
         return mouseEvent;
@@ -173,15 +163,24 @@ public class MouseController implements MouseListener {
 
     @Override
     public MouseEvent mousePressed(MouseEvent mouseEvent) {
+
+        if (client.getWidget(24772680) != null){
+            System.out.println(client.getWidget(24772680).getBounds()); // this is the play button after logging in!
+        }
+
+//        System.out.println(Client.getVarcStrValue(24772680));
+//        System.out.println(Client.getVarcIntValue(24772680));
+//        System.out.println(Client.getVarbitValue(24772680));
+//        System.out.println(Client.getVarpValue(24772680));
+
+
         setDrawColor(Color.YELLOW);
-        System.out.println("Mouse Pressed: Color set to YELLOW");
         return mouseEvent;
     }
 
     @Override
     public MouseEvent mouseReleased(MouseEvent mouseEvent) {
         setDrawColor(Color.LIGHT_GRAY);
-        System.out.println("Mouse Released: Color set to LIGHT_GRAY");
         return mouseEvent;
     }
 

@@ -27,7 +27,7 @@ class MouseControllerOverlay extends Overlay {
         setLayer(OverlayLayer.ABOVE_WIDGETS);
         setPriority(OverlayPriority.HIGH);
 
-        System.out.println("MouseControllerOverlay using MouseController: " + controller.hashCode());
+//        System.out.println("MouseControllerOverlay using MouseController: " + controller.hashCode());
     }
 
     @Override
@@ -35,10 +35,6 @@ class MouseControllerOverlay extends Overlay {
 
         Point coords = client.getMouseCanvasPosition();
         Color drawColor = controller.getDrawColor();
-
-        if (drawColor == Color.YELLOW) {
-            System.out.println("DRAWING YELLOW!");
-        }
 
         if (coords !=null) {
             renderMouse(graphics, coords, drawColor);
