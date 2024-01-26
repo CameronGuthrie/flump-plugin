@@ -1,9 +1,6 @@
 package com.flump;
 
-import net.runelite.api.Client;
-import net.runelite.api.Item;
 import net.runelite.client.input.KeyListener;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.awt.event.KeyEvent;
@@ -40,4 +37,5 @@ public class KeyboardController implements KeyListener {
 //    public boolean isEnabledOnLoginScreen() {
 //        return KeyListener.super.isEnabledOnLoginScreen();
 //    }
+
 }

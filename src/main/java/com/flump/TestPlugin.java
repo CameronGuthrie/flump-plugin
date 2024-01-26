@@ -24,6 +24,7 @@ import java.sql.SQLOutput;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -76,6 +77,8 @@ public class TestPlugin extends Plugin {
 
     private Timer timer;
 
+    ExecutorService executorService = Executors.newSingleThreadExecutor();
+
 
     @Override
     protected void startUp() {
@@ -88,46 +91,12 @@ public class TestPlugin extends Plugin {
 
         log.info("Custom plugin started!");
 
-        /*
-        timer = new Timer();
-        TimerTask task = new TimerTask() {
-            public void run() {
-//                for (NPC npc : client.getNpcs()) {
-//                    if (npc != null && npc.getId() == 306) {
-////                        System.out.println("MoveMe = " + Perspective.localToCanvas(client, new LocalPoint(npc.getLocalLocation().getX() - 25, npc.getLocalLocation().getY()), npc.getWorldLocation().getPlane()));
-//                        setMoveMe(Perspective.localToCanvas(client, new LocalPoint(npc.getLocalLocation().getX() - 25, npc.getLocalLocation().getY()), npc.getWorldLocation().getPlane()));
-//                    }
-//                }
-
-
-                for(int i = 0; i < inventoryManager.INVENTORY_SIZE; i++) {
-                    Item[] items = inventoryManager.getInventoryItems();
-                    Widget[] widgets = inventoryManager.getWidgets();
-                    if (i < items.length) {
-                        final Item item = items[i];
-                        final Widget widget = widgets[i];
-//                      System.out.println(item);
-//                      System.out.println(inventoryManager.getRandomInventoryPoints()[i]);
-                        mouseController.move(inventoryManager.getRandomInventoryPoints()[i]);
-                    }
-                }
-
-
-
-//                mouseController.move(getMoveMe());
-//                mouseController.leftClick();
-
-//                clientThread.invokeLater(() -> {
-//                            inventoryManager.testMethod();
-//                });
-            }
-        };
-        timer.schedule(task, 30000);
-        */
     }
 
     @Override
     protected void shutDown() {
+
+        executorService.shutdown();
 
         if (timer != null) {
             timer.cancel();
@@ -145,9 +114,11 @@ public class TestPlugin extends Plugin {
             return;
         }
 
-        inventoryManager.scanInventory();
-
-        inventoryManager.randomInventoryLocations();
+        executorService.submit(() -> {
+            inventoryManager.scanInventory();
+            inventoryManager.randomInventoryLocations();
+            // Update the GUI using SwingUtilities.invokeLater if needed
+        });
 
     }
 
@@ -182,11 +153,11 @@ public class TestPlugin extends Plugin {
 
                     inventoryManager.scanInventory();
                     inventoryManager.randomInventoryLocations();
-
+                    System.out.println("updated inventory position");
                     // Stop further scheduling
                     scheduler.shutdown();
                 }
-            }, 0, 651, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
+            }, 0, 320, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
 
         }
 

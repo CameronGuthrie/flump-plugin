@@ -9,6 +9,7 @@ import net.runelite.api.widgets.Widget;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Objects;
+import java.util.Random;
 
 @Singleton
 public class InventoryManager {
@@ -41,12 +42,14 @@ public class InventoryManager {
     }
 
     public void mouseOver() {
-        for(int i = 0; i < INVENTORY_SIZE; i++) {
-            Item[] items = getInventoryItems();
-            if (i < items.length) {
-                mouseController.move(getRandomInventoryPoints()[i]);
-            }
-        }
+        Random rand = new Random();
+        mouseController.move(getRandomInventoryPoints()[rand.nextInt(getInventoryItems().length-1)]);
+//        for(int i = 0; i < INVENTORY_SIZE; i++) {
+//            Item[] items = getInventoryItems();
+//            if (i < items.length) {
+//                mouseController.move(getRandomInventoryPoints()[i]);
+//            }
+//        }
     }
 
     public void scanInventory() {
@@ -64,57 +67,10 @@ public class InventoryManager {
             if (i < widgets.length) {
                 final Widget widget = widgets[i];
                 rands[i] = mathStuff.randomRectanglePoint(widget.getBounds());
-//                System.out.println(rands[i]);
-//                System.out.println(widget.getBounds().getX() + ", " + widget.getBounds().getY());
             }
         }
 
         setRandomInventoryPoints(rands);
     }
-
-/*
-    public void testMethod() {
-        final ItemContainer itemContainer = client.getItemContainer(InventoryID.INVENTORY);
-//        client.getVarcIntValue(VarClientInt.INVENTORY_TAB);
-
-        if (itemContainer == null) {
-            System.out.println("Inventory is empty");
-            return;
-        }
-
-
-        final Item[] items = itemContainer.getItems();
-
-
-        for (int i = 0; i < INVENTORY_SIZE; i++) {
-            if (i < items.length) {
-                final Item item = items[i];
-                final ItemComposition comp = itemManager.getItemComposition(item.getId());
-//                System.out.println(item + " : " + comp.getMembersName());
-//                assert widgets != null;
-//                final Widget widget = widgets[i];
-//                controller.move(mathStuff.randomRectanglePoint(widget.getBounds()));
-            }
-        }
-
-
-//        final Widget[] widgets = Objects.requireNonNull(client.getWidget(ComponentID.INVENTORY_CONTAINER)).getChildren();
-//        for (int i = 0; i < INVENTORY_SIZE; i++) {
-//            assert widgets != null;
-//            if (i < widgets.length) {
-//                final Widget widget = widgets[i];
-//                System.out.println(widget.getBounds());
-//                controller.move(mathStuff.randomRectanglePoint(widget.getBounds()));
-//            }
-//        }
-
-    }
-
-//    private void pointAtItem(Rectangle rect){
-//        Point point = rect);
-//        ;
-//    }
-
-*/
 
 }

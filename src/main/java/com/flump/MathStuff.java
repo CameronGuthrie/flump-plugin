@@ -1,7 +1,6 @@
 package com.flump;
 
 import net.runelite.api.Point;
-
 import java.awt.*;
 import java.util.Random;
 
