@@ -133,98 +133,6 @@ public class MouseController implements MouseListener {
         worker.execute();
     }
 
-
-    /* CHAT GPT TRY and FAIL
-    private static void simulateHumanLikeMovement(Component target, Point startPoint, Point endPoint) {
-        SwingWorker<Void, Point> worker = new SwingWorker<Void, Point>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                Point controlPoint1 = getRandomControlPoint(startPoint, endPoint);
-                Point controlPoint2 = getRandomControlPoint(startPoint, endPoint);
-                final long duration = 300; // total duration of the movement
-                final long startTime = System.currentTimeMillis();
-                final long interval = 15; // time interval between point calculations
-
-                while (System.currentTimeMillis() - startTime < duration) {
-                    long currentTime = System.currentTimeMillis();
-                    double t = (double) (currentTime - startTime) / duration;
-                    t = easeInOut(t);
-                    Point nextPoint = calculateBezierPoint(t, startPoint, controlPoint1, controlPoint2, endPoint);
-
-                    // Add micro-movements
-                    if (t > 0.5) { // Adding micro movements in the second half of the movement
-                        addMicroMovements(target, nextPoint);
-                    }
-
-                    publish(nextPoint);
-
-                    // Calculate the time for the next update
-                    long nextUpdateTime = currentTime + interval;
-                    while (System.currentTimeMillis() < nextUpdateTime) {
-                        // Active waiting (loop until the next update time)
-                    }
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void process(java.util.List<Point> chunks) {
-                for (Point nextPoint : chunks) {
-                    virtualMove(target, new Point(nextPoint.getX(), nextPoint.getY()));
-                }
-            }
-
-            @Override
-            protected void done() {
-                SwingUtilities.invokeLater(() -> virtualMove(target, endPoint));
-            }
-        };
-
-        worker.execute();
-    }
-     */
-
-
-    /*
-    try {
-        // Add reaction time delay
-        Thread.sleep(100 + new Random().nextInt(100));
-
-        // Define control points for bezier curve
-        Point controlPoint1 = getRandomControlPoint(startPoint, endPoint);
-        Point controlPoint2 = getRandomControlPoint(startPoint, endPoint);
-
-        // Movement duration and current time
-        final long duration = 200; // Adjust duration as needed
-        long startTime = System.currentTimeMillis();
-
-        // Animate the movement
-        while (System.currentTimeMillis() - startTime < duration) {
-            double t = (double) (System.currentTimeMillis() - startTime) / duration;
-            t = easeInOut(t); // Apply easing function for more natural speed
-
-            // Calculate next point
-            Point nextPoint = calculateBezierPoint(t, startPoint, controlPoint1, controlPoint2, endPoint);
-            virtualMove(target, new Point(nextPoint.getX(), nextPoint.getY()));
-
-            // Add micro-movements
-            if (t > 0.5) { // Adding micro movements in the second half of the movement
-                addMicroMovements(target, nextPoint);
-            }
-
-            // Control the movement speed
-            Thread.sleep(10);
-        }
-
-        // Ensure the mouse ends at the target point
-        virtualMove(target, new Point(endPoint.getX(), endPoint.getY()));
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
-    */
-
-
     private static Point getRandomControlPoint(Point start, Point end) {
         Random rand = new Random();
         int x = (int)(Math.min(start.getX(), end.getX()) + rand.nextDouble() * Math.abs(start.getX() - end.getX()));
@@ -286,18 +194,6 @@ public class MouseController implements MouseListener {
         Point exit = new Point((int)mouseEvent.getPoint().getX(), (int)mouseEvent.getPoint().getY());
         Point output = new Point(0,0);
 
-//        if (exit.getY() < 0 && exit.getY() > 0) {
-//            output = new Point(exit.getX(), 0);
-//        } else if (exit.getY() > client.getCanvasHeight()) {
-//            output = new Point(exit.getX(), client.getCanvasHeight());
-//        } else if (exit.getX() < 0) {
-//            output = new Point(0, exit.getY());
-//        }  else if (exit.getX() > client.getCanvasWidth()) {
-//            output = new Point(client.getCanvasWidth(), exit.getY());
-//        } else if (exit.getX() < 0 && exit.getY() < 0){
-//            output = new Point(0, 0);
-//        }
-
         if (exit.getY() < 0 && exit.getX() > 0) {
             output = new Point(exit.getX(), 0);
         }
@@ -333,9 +229,7 @@ public class MouseController implements MouseListener {
 
         if (getMouseCoords() != null){
             setStartPoint(getMouseCoords());
-        } //else {
-//            setStartPoint(new Point(0,0));
-        //}
+        }
 
         return mouseEvent;
     }

@@ -22,7 +22,8 @@ class MouseControllerOverlay extends Overlay {
         this.client = client;
         this.controller = controller;
         setPosition(OverlayPosition.DYNAMIC);
-        setLayer(OverlayLayer.ABOVE_WIDGETS);
+        setLayer(OverlayLayer.ALWAYS_ON_TOP);
+//        setLayer(OverlayLayer.ABOVE_WIDGETS);
         setPriority(OverlayPriority.HIGH);
 
 //        System.out.println("MouseControllerOverlay using MouseController: " + controller.hashCode());

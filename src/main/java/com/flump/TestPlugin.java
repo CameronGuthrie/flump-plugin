@@ -1,15 +1,17 @@
 package com.flump;
 
+import com.google.inject.Provides;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.input.KeyManager;
@@ -19,11 +21,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.input.MouseManager;
 import javax.inject.Inject;
-import java.awt.*;
-import java.sql.SQLOutput;
-import java.util.Objects;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -31,18 +29,26 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @PluginDescriptor(
-        name = "! Test Plugin",
+        name = "test",
         description = "A plugin that is testing mouse event listeners",
-        tags = {"", ""}
+        tags = {"config", ""},
+        loadWhenOutdated = true,
+        enabledByDefault = false
 )
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class TestPlugin extends Plugin {
+
+    @Inject
+    private TestConfig config;
 
     @Inject
     private Client client;
 
     @Inject
     private ClientThread clientThread;
+
+    @Inject
+    private InteractionManager interactionManager;// = new InteractionManager(client, messageManager);
 
     @Inject
     private InventoryManager inventoryManager;
@@ -66,6 +72,9 @@ public class TestPlugin extends Plugin {
     private MouseControllerOverlay mouseOverlay;
 
     @Inject
+    private CameraInfoOverlay cameraInfoOverlay;
+
+    @Inject
     private ItemManager itemManager;
 
     @Inject
@@ -84,6 +93,7 @@ public class TestPlugin extends Plugin {
     protected void startUp() {
 
         overlayManager.add(mouseOverlay);
+        overlayManager.add(cameraInfoOverlay);
         mouseManager.registerMouseListener(0, mouseController);
         keyManger.registerKeyListener(keyboardController);
 
@@ -104,7 +114,9 @@ public class TestPlugin extends Plugin {
         }
 
         overlayManager.remove(mouseOverlay);
+        overlayManager.remove(cameraInfoOverlay);
         mouseManager.unregisterMouseListener(mouseController);
+        keyManger.unregisterKeyListener(keyboardController);
         log.info("Custom plugin stopped!");
     }
 
@@ -123,45 +135,56 @@ public class TestPlugin extends Plugin {
     }
 
     @Subscribe
-    public void onGameStateChanged(GameStateChanged event){
-        if (event.getGameState().equals(GameState.LOGIN_SCREEN)) {
-            System.out.println("\n ON LOGIN SCREEN ! \n");
+    public void onGameStateChanged(GameStateChanged event) {
+        if (config.autoLogin()) {
+            if (event.getGameState().equals(GameState.LOGIN_SCREEN)) {
+                System.out.println("\n ON LOGIN SCREEN ! \n");
+            }
+
+            if (event.getGameState().equals(GameState.LOGGED_IN)) {
+
+                scheduler.scheduleAtFixedRate(() -> {
+                    Widget clickToPlay = client.getWidget(24772681);
+                    if (clickToPlay != null) {
+                        System.out.println("Click to play is not null!");
+
+                        // Widget is found, perform the action
+                        MathStuff mathStuff = new MathStuff();
+                        mouseController.move(mathStuff.randomRectanglePoint(clickToPlay.getBounds()));
+                        mouseController.leftClick();
+
+                        // Stop further scheduling
+                        //scheduler.shutdown();
+                    }
+                }, 0, 651, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
+
+
+                scheduler.scheduleAtFixedRate(() -> {
+                    Widget inventoryIcon = client.getWidget(ComponentID.FIXED_VIEWPORT_INVENTORY_ICON);
+                    if (inventoryIcon != null) {
+
+                        inventoryManager.scanInventory();
+                        inventoryManager.randomInventoryLocations();
+                        System.out.println("updated inventory position");
+                        // Stop further scheduling
+                        scheduler.shutdown();
+                    }
+                }, 0, 320, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
+
+            }
         }
+    }
 
-        if (event.getGameState().equals(GameState.LOGGED_IN)){
+    @Subscribe
+    public void onInteractingChanged(InteractingChanged event) {
 
-            scheduler.scheduleAtFixedRate(() -> {
-                Widget clickToPlay = client.getWidget(24772681);
-                if (clickToPlay != null) {
-                    System.out.println("Click to play is not null!");
-
-                    // Widget is found, perform the action
-                    MathStuff mathStuff = new MathStuff();
-                    mouseController.move(mathStuff.randomRectanglePoint(clickToPlay.getBounds()));
-                    mouseController.leftClick();
-
-                    // Stop further scheduling
-                    //scheduler.shutdown();
-                }
-            }, 0, 651, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
-
-
-
-            scheduler.scheduleAtFixedRate(() -> {
-                Widget inventoryIcon = client.getWidget(ComponentID.FIXED_VIEWPORT_INVENTORY_ICON);
-                if (inventoryIcon != null) {
-
-                    inventoryManager.scanInventory();
-                    inventoryManager.randomInventoryLocations();
-                    System.out.println("updated inventory position");
-                    // Stop further scheduling
-                    scheduler.shutdown();
-                }
-            }, 0, 320, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
-
-        }
+        interactionManager.interact(event);
 
     }
 
+    @Provides
+    TestConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(TestConfig.class);
+    }
 
 }

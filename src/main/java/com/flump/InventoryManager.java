@@ -44,12 +44,6 @@ public class InventoryManager {
     public void mouseOver() {
         Random rand = new Random();
         mouseController.move(getRandomInventoryPoints()[rand.nextInt(getInventoryItems().length-1)]);
-//        for(int i = 0; i < INVENTORY_SIZE; i++) {
-//            Item[] items = getInventoryItems();
-//            if (i < items.length) {
-//                mouseController.move(getRandomInventoryPoints()[i]);
-//            }
-//        }
     }
 
     public void scanInventory() {
