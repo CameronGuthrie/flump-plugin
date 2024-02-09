@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.Point;
+import net.runelite.api.events.CommandExecuted;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.InteractingChanged;
 import net.runelite.api.events.ItemContainerChanged;
@@ -79,6 +80,9 @@ public class TestPlugin extends Plugin {
 
     @Inject
     private OverlayManager overlayManager;
+
+    @Inject
+    CameraController cameraController;
 
     @Getter
     @Setter
@@ -180,6 +184,20 @@ public class TestPlugin extends Plugin {
 
         interactionManager.interact(event);
 
+    }
+
+    @Subscribe
+    public void onCommandExecuted(CommandExecuted commandExecuted)
+    {
+        String[] args = commandExecuted.getArguments();
+        switch (commandExecuted.getCommand())
+        {
+            case "camera":
+            {
+                cameraController.adjustCamera(250);
+                break;
+            }
+        }
     }
 
     @Provides

@@ -12,16 +12,16 @@ import java.awt.event.KeyEvent;
 public class KeyboardController implements KeyListener {
 
     private final Client client;
-    private final CameraController cameraController;
+//    private final CameraController cameraController;
     //private final InventoryManager inventoryManager;
 
 
     @Inject
-    private KeyboardController(CameraController cameraController, Client client) { //, CameraController cameraController) {
+    private KeyboardController( Client client) { //CameraController cameraController, Client client) { //, CameraController cameraController) {
 
         //this.inventoryManager = inventoryManager;
         this.client = client;
-        this.cameraController = cameraController;
+//        this.cameraController = cameraController;
     }
 
     @Override
@@ -38,9 +38,9 @@ public class KeyboardController implements KeyListener {
     public void keyReleased(KeyEvent e) {
 
         System.out.println("Released: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " +  e.getKeyCode());
-        if (e.getKeyCode() == e.VK_SPACE) {
-            cameraController.moveCamera(client, this);
-        }
+//        if (e.getKeyCode() == e.VK_SPACE) {
+//            cameraController.adjustCamera(250);//(client, this);
+//        }
 
     }
 

@@ -15,4 +15,8 @@ public class MathStuff {
         return new Point(x, y);
     }
 
+    public static boolean isWithinTolerance(int actual, int target, int tolerance) {
+        return Math.abs(actual - target) <= tolerance;
+    }
+
 }

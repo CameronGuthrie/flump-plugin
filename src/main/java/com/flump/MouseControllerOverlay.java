@@ -35,7 +35,7 @@ class MouseControllerOverlay extends Overlay {
         Point coords = client.getMouseCanvasPosition();
         Color drawColor = controller.getDrawColor();
 
-        if (coords !=null) {
+        if (coords !=null || coords != new Point(0,0)) {
             renderMouse(graphics, coords, drawColor);
         }
 
