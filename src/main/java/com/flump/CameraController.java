@@ -8,6 +8,8 @@ import javax.swing.*;
 
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_UP;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
 
 @Singleton
 public class CameraController {
@@ -15,21 +17,27 @@ public class CameraController {
     private final Client client;
     private final KeyboardController keyboardController;
 
+    private int yawTolerance = 50;
+    private int pitchTolerance = 20;
+
     @Inject
     public CameraController(Client client, KeyboardController keyboardController) {
         this.client = client;
         this.keyboardController = keyboardController;
     }
 
-    public void adjustCamera(int targetPitch) {
+    public void adjustCamera(int targetYaw, int targetPitch) {
         // SwingWorker to handle background processing
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                if (client.getCameraPitch() > targetPitch) {
-                    simulateKeyHold(VK_DOWN, targetPitch);
-                } else if (client.getCameraPitch() < targetPitch) {
-                    simulateKeyHold(VK_UP, targetPitch);
+                // Adjust yaw
+                if (!MathStuff.isWithinTolerance(client.getCameraYaw(), targetYaw, yawTolerance)) {
+                    simulateKeyHoldForOrientation(VK_LEFT, VK_RIGHT, targetYaw, true); // Assuming VK_LEFT and VK_RIGHT adjust yaw
+                }
+                // Adjust pitch
+                if (!MathStuff.isWithinTolerance(client.getCameraPitch(), targetPitch, pitchTolerance)) {
+                    simulateKeyHoldForOrientation(VK_DOWN, VK_UP, targetPitch, false); // Assuming VK_DOWN and VK_UP adjust pitch
                 }
                 return null;
             }
@@ -37,22 +45,26 @@ public class CameraController {
         worker.execute();
     }
 
-    private void simulateKeyHold(int keyCode, int targetPitch) {
-        // Define a tolerance for the camera pitch to be considered "close enough" to the target
-        final int tolerance = 20;
+    private void simulateKeyHoldForOrientation(int decreaseKey, int increaseKey, int target, boolean isYaw) {
+        final int tolerance = isYaw ? yawTolerance : pitchTolerance;
+        int currentValue = isYaw ? client.getCameraYaw() : client.getCameraPitch();
 
-        keyboardController.press(keyCode);
-        // Logic to hold the key down until the camera pitch is adjusted to the target
-        // This loop needs to be non-blocking and should ideally run in a background thread
-        while (!MathStuff.isWithinTolerance(client.getCameraPitch(), targetPitch, tolerance) && !Thread.currentThread().isInterrupted()) {
+        // Decide which key to press based on whether we need to increase or decrease the value
+        int keyCodeToPress = currentValue < target ? increaseKey : decreaseKey;
+        keyboardController.press(keyCodeToPress);
+
+        // Keep checking until the target is within tolerance
+        while (!MathStuff.isWithinTolerance(currentValue, target, tolerance) && !Thread.currentThread().isInterrupted()) {
             try {
-                Thread.sleep(10); // Small delay to check the condition without hogging the CPU
+                Thread.sleep(10); // Small delay to avoid high CPU usage
+                currentValue = isYaw ? client.getCameraYaw() : client.getCameraPitch(); // Update current value
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore the interrupted status
-                break; // Exit the loop if the thread is interrupted
+                Thread.currentThread().interrupt();
+                break;
             }
         }
-        keyboardController.release(keyCode);
+
+        keyboardController.release(keyCodeToPress);
     }
 
 //    public void moveCamera(Client client, KeyboardController keyboardController) {

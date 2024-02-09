@@ -194,7 +194,7 @@ public class TestPlugin extends Plugin {
         {
             case "camera":
             {
-                cameraController.adjustCamera(250);
+                cameraController.adjustCamera(512,250);
                 break;
             }
         }
