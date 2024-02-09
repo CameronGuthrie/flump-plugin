@@ -76,6 +76,9 @@ public class TestPlugin extends Plugin {
     private CameraInfoOverlay cameraInfoOverlay;
 
     @Inject
+    private PlayerPositionOverlay playerPositionOverlay;
+
+    @Inject
     private ItemManager itemManager;
 
     @Inject
@@ -98,6 +101,7 @@ public class TestPlugin extends Plugin {
 
         overlayManager.add(mouseOverlay);
         overlayManager.add(cameraInfoOverlay);
+        overlayManager.add(playerPositionOverlay);
         mouseManager.registerMouseListener(0, mouseController);
         keyManger.registerKeyListener(keyboardController);
 
@@ -119,6 +123,7 @@ public class TestPlugin extends Plugin {
 
         overlayManager.remove(mouseOverlay);
         overlayManager.remove(cameraInfoOverlay);
+        overlayManager.remove(playerPositionOverlay);
         mouseManager.unregisterMouseListener(mouseController);
         keyManger.unregisterKeyListener(keyboardController);
         log.info("Custom plugin stopped!");
@@ -195,6 +200,7 @@ public class TestPlugin extends Plugin {
             case "camera":
             {
                 cameraController.adjustCamera(512,250);
+                cameraController.adjustZoom(350);
                 break;
             }
         }

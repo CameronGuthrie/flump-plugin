@@ -40,11 +40,11 @@ public interface TestConfig extends Config {
 
     @ConfigItem(
             position = 3,
-            keyName = "cameraReset",
-            name = "Reset Camera",
-            description = "Move camera back into default position"
+            keyName = "playerPosition",
+            name = "Player Position",
+            description = "Player positional information"
     )
 
-    default boolean cameraReset() { return false; }
+    default boolean playerPosition() { return false; }
 
 }

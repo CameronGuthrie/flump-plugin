@@ -7,6 +7,7 @@ import net.runelite.api.Point;
 import net.runelite.client.input.MouseListener;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -85,8 +86,16 @@ public class MouseController implements MouseListener {
         target.dispatchEvent(move);
     }
 
+    public void virtualScrollUp() {
+        simulateMouseWheelMovement(-1); // Negative units to scroll up
+    }
+
+    public void virtualScrollDown() {
+        simulateMouseWheelMovement(1); // Positive units to scroll down
+    }
+
     private void simulateHumanLikeMovement(Component target, Point startPoint, Point endPoint) {
-        SwingWorker<Void, Point> worker = new SwingWorker<Void, Point>() {
+        SwingWorker<Void, Point> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
                 Point controlPoint1 = getRandomControlPoint(startPoint, endPoint);
@@ -131,6 +140,26 @@ public class MouseController implements MouseListener {
         };
 
         worker.execute();
+    }
+
+    private void simulateMouseWheelMovement(int wheelAmt) {
+        Component targetComponent = client.getCanvas(); // Assume this is the component to receive the event
+        if (targetComponent != null) {
+            MouseWheelEvent wheelEvent = new MouseWheelEvent(
+                    targetComponent,
+                    MouseWheelEvent.MOUSE_WHEEL,
+                    System.currentTimeMillis(),
+                    0, // No modifiers
+                    mouseCoords.getX(), // x coordinate of the mouse cursor in the component's coordinate space
+                    mouseCoords.getY(), // y coordinate
+                    0, // click count
+                    false, // not a popup trigger
+                    MouseWheelEvent.WHEEL_UNIT_SCROLL,
+                    1, // scroll amount
+                    wheelAmt // wheel rotation
+            );
+            targetComponent.dispatchEvent(wheelEvent);
+        }
     }
 
     private static Point getRandomControlPoint(Point start, Point end) {
