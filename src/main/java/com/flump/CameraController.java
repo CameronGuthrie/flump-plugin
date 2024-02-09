@@ -39,7 +39,7 @@ public class CameraController {
 
     private void simulateKeyHold(int keyCode, int targetPitch) {
         // Define a tolerance for the camera pitch to be considered "close enough" to the target
-        final int tolerance = 10;
+        final int tolerance = 20;
 
         keyboardController.press(keyCode);
         // Logic to hold the key down until the camera pitch is adjusted to the target
