@@ -33,13 +33,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @PluginDescriptor(
-        name = "test",
-        description = "A plugin that is testing mouse event listeners",
-        tags = {"config", ""},
+        name = "Flump Plugin",
+        description = "A plugin that provides enhanced interaction and automation features",
+        tags = {"automation", "interaction", "overlay"},
         loadWhenOutdated = true,
         enabledByDefault = false
 )
-//@SuppressWarnings("unused")
 public class TestPlugin extends Plugin {
 
     @Inject
@@ -52,18 +51,18 @@ public class TestPlugin extends Plugin {
     private ClientThread clientThread;
 
     @Inject
-    private InteractionManager interactionManager;// = new InteractionManager(client, messageManager);
+    private InteractionManager interactionManager;
 
     @Inject
     private InventoryManager inventoryManager;
 
     @Inject
-    private KeyManager keyManger;
+    private KeyManager keyManager;
 
     @Inject
-    private  KeyboardController keyboardController;
+    private KeyboardController keyboardController;
 
-    // this is for waiting until an object is not null
+    // Scheduler for periodic tasks
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Inject
@@ -88,7 +87,7 @@ public class TestPlugin extends Plugin {
     private OverlayManager overlayManager;
 
     @Inject
-    CameraController cameraController;
+    private CameraController cameraController;
 
     @Getter
     @Setter
@@ -96,24 +95,23 @@ public class TestPlugin extends Plugin {
 
     private Timer timer;
 
-    ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     /**
      * Sets up the plugin by registering overlays and input listeners.
      */
     @Override
     protected void startUp() {
-        // Logic to start up the plugin.
+        // Register overlays
         overlayManager.add(mouseOverlay);
         overlayManager.add(cameraInfoOverlay);
         overlayManager.add(playerPositionOverlay);
+
+        // Register input listeners
         mouseManager.registerMouseListener(0, mouseController);
-        keyManger.registerKeyListener(keyboardController);
+        keyManager.registerKeyListener(keyboardController);
 
-        System.out.println("TestPlugin using MouseController: " + mouseController.hashCode());
-
-        log.info("Custom plugin started!");
-
+        log.info("Flump Plugin started!");
     }
 
     /**
@@ -121,7 +119,7 @@ public class TestPlugin extends Plugin {
      */
     @Override
     protected void shutDown() {
-        // Logic to shut down the plugin.
+        // Shutdown executor services
         executorService.shutdown();
 
         if (timer != null) {
@@ -129,103 +127,119 @@ public class TestPlugin extends Plugin {
             timer = null;
         }
 
+        // Unregister overlays
         overlayManager.remove(mouseOverlay);
         overlayManager.remove(cameraInfoOverlay);
         overlayManager.remove(playerPositionOverlay);
+
+        // Unregister input listeners
         mouseManager.unregisterMouseListener(mouseController);
-        keyManger.unregisterKeyListener(keyboardController);
-        log.info("Custom plugin stopped!");
+        keyManager.unregisterKeyListener(keyboardController);
+
+        log.info("Flump Plugin stopped!");
     }
 
     /**
      * Handles changes in the item container, such as inventory changes.
+     *
      * @param event The item container change event.
      */
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged event) {
-        // Logic to handle item container changes.
+        // Check if the changed container is the player's inventory
         if (event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY)) {
             return;
         }
 
+        // Update inventory asynchronously
         executorService.submit(() -> {
             inventoryManager.scanInventory();
             inventoryManager.randomInventoryLocations();
-            // Update the GUI using SwingUtilities.invokeLater if needed
         });
-
     }
 
+    /**
+     * Handles changes in the game state, such as logging in or out.
+     *
+     * @param event The game state change event.
+     */
     @Subscribe
     public void onGameStateChanged(GameStateChanged event) {
         if (config.autoLogin()) {
-            if (event.getGameState().equals(GameState.LOGIN_SCREEN)) {
+            if (event.getGameState() == GameState.LOGIN_SCREEN) {
                 System.out.println("\n ON LOGIN SCREEN ! \n");
             }
 
-            if (event.getGameState().equals(GameState.LOGGED_IN)) {
+            if (event.getGameState() == GameState.LOGGED_IN) {
 
+                // Schedule task to click "Click to Play" button if it appears
                 scheduler.scheduleAtFixedRate(() -> {
                     Widget clickToPlay = client.getWidget(24772681);
                     if (clickToPlay != null) {
                         System.out.println("Click to play is not null!");
 
-                        // Widget is found, perform the action
+                        // Simulate mouse movement and click on the button
                         mouseController.move(MathStuff.randomRectanglePoint(clickToPlay.getBounds()));
                         mouseController.leftClick();
-
-                        // Stop further scheduling
-                        //scheduler.shutdown();
                     }
-                }, 0, 651, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
+                }, 0, 651, TimeUnit.MILLISECONDS); // Check every 651 milliseconds
 
-
+                // Schedule task to update inventory positions
                 scheduler.scheduleAtFixedRate(() -> {
                     Widget inventoryIcon = client.getWidget(ComponentID.FIXED_VIEWPORT_INVENTORY_ICON);
                     if (inventoryIcon != null) {
-
                         inventoryManager.scanInventory();
                         inventoryManager.randomInventoryLocations();
-                        System.out.println("updated inventory position");
-                        // Stop further scheduling
+                        System.out.println("Updated inventory positions");
                         scheduler.shutdown();
                     }
-                }, 0, 320, TimeUnit.MILLISECONDS); // Check every 500 milliseconds
+                }, 0, 320, TimeUnit.MILLISECONDS); // Check every 320 milliseconds
 
             }
         }
     }
 
+    /**
+     * Handles interaction changes involving the player.
+     *
+     * @param event The interacting changed event.
+     */
     @Subscribe
     public void onInteractingChanged(InteractingChanged event) {
-
         interactionManager.interact(event);
-
     }
 
+    /**
+     * Handles custom commands entered in the game chat.
+     *
+     * @param commandExecuted The command executed event.
+     */
     @Subscribe
-    public void onCommandExecuted(CommandExecuted commandExecuted)
-    {
+    public void onCommandExecuted(CommandExecuted commandExecuted) {
         String[] args = commandExecuted.getArguments();
-        switch (commandExecuted.getCommand())
-        {
-            case "camera":
-            {
-                cameraController.adjustCamera(512,250);
+        switch (commandExecuted.getCommand()) {
+            case "camera": {
+                cameraController.adjustCamera(512, 250);
                 cameraController.adjustZoom(350);
                 break;
             }
-            case "inventory":
-            {
+            case "inventory": {
                 inventoryManager.mouseOver();
                 break;
             }
+            default:
+                break;
         }
     }
 
+    /**
+     * Provides the plugin configuration.
+     *
+     * @param configManager The ConfigManager instance.
+     * @return The TestConfig instance.
+     */
     @Provides
     TestConfig provideConfig(ConfigManager configManager) {
         return configManager.getConfig(TestConfig.class);
     }
-
 }

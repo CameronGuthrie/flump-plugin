@@ -10,19 +10,33 @@ import net.runelite.client.ui.overlay.components.TitleComponent;
 import javax.inject.Inject;
 import java.awt.*;
 
+/**
+ * An overlay that displays camera information such as pitch, yaw, and zoom.
+ */
 class CameraInfoOverlay extends Overlay {
     private final Client client;
     private final TestConfig config;
     private final PanelComponent panelComponent = new PanelComponent();
 
+    /**
+     * Constructor for CameraInfoOverlay.
+     *
+     * @param client The game client instance.
+     * @param config The plugin configuration.
+     */
     @Inject
     private CameraInfoOverlay(Client client, TestConfig config) {
-        setPosition(OverlayPosition.BOTTOM_LEFT);//  .ABOVE_CHATBOX_RIGHT);
+        setPosition(OverlayPosition.BOTTOM_LEFT); // Position the overlay at the bottom left
         this.client = client;
         this.config = config;
     }
 
-    // currently just doing camera position
+    /**
+     * Renders the overlay if camera information display is enabled in the config.
+     *
+     * @param graphics The Graphics2D object used for rendering.
+     * @return The Dimension of the rendered overlay.
+     */
     @Override
     public Dimension render(Graphics2D graphics) {
 
@@ -41,37 +55,36 @@ class CameraInfoOverlay extends Overlay {
                     graphics.getFontMetrics().stringWidth(overlayTitle) + 30,
                     0));
 
-            // Add a line on the overlay camera pitch
+            // Add a line on the overlay for camera pitch
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Pitch:")
                     .right(Integer.toString(client.getCameraPitch()))
                     .build());
 
-            // Add a line on the overlay camera yaw
+            // Add a line on the overlay for camera yaw
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Yaw:")
                     .right(Integer.toString(client.getCameraYaw()))
                     .build());
 
-            // Add a line on the overlay camera zoom
+            // Add a line on the overlay for camera zoom
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Zoom:")
                     .right(Integer.toString(client.getScale()))
                     .build());
+
             /*
-            // Add a line on the overlay camera x
+            // Uncomment the following lines to display camera X, Y, Z coordinates
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("X:")
                     .right(Integer.toString(client.getCameraX()))
                     .build());
 
-            // Add a line on the overlay camera y
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Y:")
                     .right(Integer.toString(client.getCameraY()))
                     .build());
 
-            // Add a line on the overlay camera z
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Z:")
                     .right(Integer.toString(client.getCameraZ()))
