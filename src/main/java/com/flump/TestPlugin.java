@@ -224,6 +224,22 @@ public class TestPlugin extends Plugin {
                 break;
             }
             case "inventory": {
+                // Initialize inventory data
+                inventoryManager.scanInventory();
+                inventoryManager.randomInventoryLocations();
+
+                // Check if initialization was successful
+                if (inventoryManager.getInventoryItems() == null || inventoryManager.getInventoryItems().length == 0) {
+                    log.warn("Inventory is empty or not loaded.");
+                    return;
+                }
+
+                if (inventoryManager.getRandomInventoryPoints() == null || inventoryManager.getRandomInventoryPoints().length == 0) {
+                    log.warn("Random inventory points are not initialized.");
+                    return;
+                }
+
+                // Perform mouse over action
                 inventoryManager.mouseOver();
                 break;
             }
@@ -231,6 +247,7 @@ public class TestPlugin extends Plugin {
                 break;
         }
     }
+
 
     /**
      * Provides the plugin configuration.

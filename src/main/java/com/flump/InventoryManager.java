@@ -53,6 +53,24 @@ public class InventoryManager {
      * Simulates hovering over a random inventory slot by moving the mouse to a random point within an item's bounds.
      */
     public void mouseOver() {
+        if (getInventoryItems() == null || getInventoryItems().length == 0) {
+            // Inventory items not initialized, attempt to scan inventory
+            scanInventory();
+            if (getInventoryItems() == null || getInventoryItems().length == 0) {
+                System.out.println("No inventory items found, cannot perform mouseOver.");
+                return;
+            }
+        }
+
+        if (getRandomInventoryPoints() == null || getRandomInventoryPoints().length == 0) {
+            // Random points not initialized, attempt to generate them
+            randomInventoryLocations();
+            if (getRandomInventoryPoints() == null || getRandomInventoryPoints().length == 0) {
+                System.out.println("Random inventory points not initialized, cannot perform mouseOver.");
+                return;
+            }
+        }
+
         Random rand = new Random();
         int index = rand.nextInt(getInventoryItems().length);
         mouseController.move(getRandomInventoryPoints()[index]);
