@@ -23,7 +23,7 @@
 
 ## **Overview**
 
-[![Flump Plugin](https://i9.ytimg.com/vi/Df1-nVvbUK0/mqdefault.jpg?sqp=CPjP_7kG-oaymwEmCMACELQB8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGAgYChgMA8=&rs=AOn4CLBLdt50RNqKyn_KtxcijCFxUh0UyA)](http://www.youtube.com/watch?v=Df1-nVvbUK0 "OSRS Automation Plugin")
+[![Flump Plugin](https://i.ytimg.com/vi/Df1-nVvbUK0/maxresdefault.jpg?)](http://www.youtube.com/watch?v=Df1-nVvbUK0 "OSRS Automation Plugin")
 
 The **Flump Plugin** is a custom plugin developed for the RuneLite client, aiming to enhance the Old School RuneScape gameplay experience by providing advanced automation features, interaction management, and visual overlays. This plugin simulates human-like mouse and keyboard inputs to interact with the game client, offering a range of functionalities from camera control to inventory management.
 
