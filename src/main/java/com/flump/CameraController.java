@@ -11,6 +11,9 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 
+/**
+ * Manages the camera movements in the game, such as yaw, pitch, and zoom.
+ */
 @Singleton
 public class CameraController {
 
@@ -32,7 +35,13 @@ public class CameraController {
         this.mouseController = mouseController;
     }
 
+    /**
+     * Adjusts the camera to a specified yaw and pitch.
+     * @param targetYaw The target yaw.
+     * @param targetPitch The target pitch.
+     */
     public void adjustCamera(int targetYaw, int targetPitch) {
+        // Logic to adjust camera.
         adjustYawDone = false;
         adjustPitchDone = false;
 
@@ -58,7 +67,50 @@ public class CameraController {
         worker.execute();
     }
 
+    private int facing(Compass c) {
+
+        int direction;
+
+        switch(c) {
+            case NORTH:
+                direction = 0;
+                break;
+            case NORTHEAST:
+                direction = 1792;
+                break;
+            case EAST:
+                direction = 1536;
+                break;
+            case SOUTHEAST:
+                direction = 1280;
+                break;
+            case SOUTH:
+                direction = 1024;
+                break;
+            case SOUTHWEST:
+                direction = 768;
+                break;
+            case WEST:
+                direction = 512;
+                break;
+            case NORTHWEST:
+                direction = 256;
+                break;
+            default:
+                System.out.println("DEFAULT CASE");
+                direction = 0;
+                break;
+        }
+
+        return direction;
+    }
+
+    /**
+     * Adjusts the zoom level of the camera.
+     * @param targetZoom The target zoom level.
+     */
     public void adjustZoom(int targetZoom) {
+        // Logic to adjust zoom.
         SwingWorker<Void, Void> zoomWorker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {

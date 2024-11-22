@@ -14,7 +14,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Random;
-
+/**
+ * Controls mouse interactions in the game, including movements and clicks.
+ * Simulates human-like movement using Bezier curves.
+ */
 @Singleton
 public class MouseController implements MouseListener {
 
@@ -42,7 +45,12 @@ public class MouseController implements MouseListener {
         mouseCoords = new Point(mouseEvent.getX(), mouseEvent.getY());
     }
 
+    /**
+     * Moves the mouse to a specified point on the game canvas.
+     * @param point The target point for mouse movement.
+     */
     public void move(Point point) {
+        // Logic to move the mouse.
         if (client == null || client.getCanvas() == null || point == null) {
             System.out.println("Client, canvas, or point is null");
             return;
@@ -50,11 +58,19 @@ public class MouseController implements MouseListener {
         simulateHumanLikeMovement(client.getCanvas(), this.getStartPoint(), point);
     }
 
+    /**
+     * Simulates a left mouse click at the current mouse position.
+     */
     public void leftClick() {
+        // Logic for left click.
         virtualClick(client.getCanvas(), client.getMouseCanvasPosition().getX(), client.getMouseCanvasPosition().getY(), MouseEvent.BUTTON1);
     }
 
+    /**
+     * Simulates a right mouse click at the current mouse position.
+     */
     public void rightClick() {
+        // Logic for right click.
         virtualClick(client.getCanvas(), client.getMouseCanvasPosition().getX(), client.getMouseCanvasPosition().getY(), MouseEvent.BUTTON2);
     }
 
@@ -94,7 +110,15 @@ public class MouseController implements MouseListener {
         simulateMouseWheelMovement(1); // Positive units to scroll down
     }
 
+
+    /**
+     * Simulates human-like mouse movement from the start point to the end point using Bezier curves.
+     * @param target The game canvas.
+     * @param startPoint The starting point.
+     * @param endPoint The destination point.
+     */
     private void simulateHumanLikeMovement(Component target, Point startPoint, Point endPoint) {
+        // Logic to simulate human-like movement.
         SwingWorker<Void, Point> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
@@ -260,6 +284,7 @@ public class MouseController implements MouseListener {
             setStartPoint(getMouseCoords());
         }
 
+        System.out.println();
         return mouseEvent;
     }
 

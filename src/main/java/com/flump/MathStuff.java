@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class MathStuff {
 
-    public Point randomRectanglePoint(Rectangle rect) {
+    public static Point randomRectanglePoint(Rectangle rect) {
         Random rand = new Random();
 
         int x = rect.x + (int)(0.3*rect.width) + rand.nextInt((int)(0.3*rect.width));

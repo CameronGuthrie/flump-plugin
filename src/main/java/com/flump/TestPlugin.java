@@ -28,6 +28,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Main plugin class that integrates mouse, keyboard, interaction, and overlay managers.
+ */
 @Slf4j
 @PluginDescriptor(
         name = "test",
@@ -95,10 +98,12 @@ public class TestPlugin extends Plugin {
 
     ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-
+    /**
+     * Sets up the plugin by registering overlays and input listeners.
+     */
     @Override
     protected void startUp() {
-
+        // Logic to start up the plugin.
         overlayManager.add(mouseOverlay);
         overlayManager.add(cameraInfoOverlay);
         overlayManager.add(playerPositionOverlay);
@@ -111,9 +116,12 @@ public class TestPlugin extends Plugin {
 
     }
 
+    /**
+     * Tears down the plugin by unregistering overlays and input listeners.
+     */
     @Override
     protected void shutDown() {
-
+        // Logic to shut down the plugin.
         executorService.shutdown();
 
         if (timer != null) {
@@ -129,8 +137,13 @@ public class TestPlugin extends Plugin {
         log.info("Custom plugin stopped!");
     }
 
+    /**
+     * Handles changes in the item container, such as inventory changes.
+     * @param event The item container change event.
+     */
     @Subscribe
     public void onItemContainerChanged(ItemContainerChanged event) {
+        // Logic to handle item container changes.
         if (event.getItemContainer() != client.getItemContainer(InventoryID.INVENTORY)) {
             return;
         }
@@ -158,8 +171,7 @@ public class TestPlugin extends Plugin {
                         System.out.println("Click to play is not null!");
 
                         // Widget is found, perform the action
-                        MathStuff mathStuff = new MathStuff();
-                        mouseController.move(mathStuff.randomRectanglePoint(clickToPlay.getBounds()));
+                        mouseController.move(MathStuff.randomRectanglePoint(clickToPlay.getBounds()));
                         mouseController.leftClick();
 
                         // Stop further scheduling
@@ -201,6 +213,11 @@ public class TestPlugin extends Plugin {
             {
                 cameraController.adjustCamera(512,250);
                 cameraController.adjustZoom(350);
+                break;
+            }
+            case "inventory":
+            {
+                inventoryManager.mouseOver();
                 break;
             }
         }

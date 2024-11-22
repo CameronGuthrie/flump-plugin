@@ -9,7 +9,9 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import java.awt.*;
 import net.runelite.client.util.ColorUtil;
-
+/**
+ * Detects combat-related events, such as animations and projectiles, and manages protection prayers.
+ */
 @Slf4j
 @PluginDescriptor(
         name = "!FLUMP - Detect test",
@@ -33,10 +35,13 @@ public class DetectCombatPlugin extends Plugin {
         log.info("Custom plugin stopped!");
     }
 
-    // check for animation
+    /**
+     * Handles animation changes to detect the use of protection prayers.
+     * @param event The animation change event.
+     */
     @Subscribe
     public void onAnimationChanged(AnimationChanged event) {
-
+        // Logic to handle animation changes.
         final Actor actor = event.getActor();
         final int anim = actor.getAnimation();
 
@@ -63,10 +68,13 @@ public class DetectCombatPlugin extends Plugin {
 
     }
 
-    // Check for projectiles (will be the fallback if animation check fails)
+    /**
+     * Handles projectile movements to track incoming attacks.
+     * @param event The projectile moved event.
+     */
     @Subscribe
     public void onProjectileMoved(ProjectileMoved event) {
-
+        // Logic to handle projectile movements.
         final Projectile projectile = event.getProjectile();
 
         if (projectile.getInteracting().getName() == null) {

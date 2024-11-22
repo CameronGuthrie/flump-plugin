@@ -47,4 +47,13 @@ public interface TestConfig extends Config {
 
     default boolean playerPosition() { return false; }
 
+    @ConfigItem(
+            position = 4,
+            keyName = "killNPC",
+            name = "Kill NPC ID",
+            description = "kill this npc"
+    )
+
+    default String killNPC() { return "Hello!"; }
+
 }
