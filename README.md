@@ -129,7 +129,7 @@ To build and run the plugin within IntelliJ IDEA, you need to create a new run c
 2. **Configure Run Configuration**:
    - **Name**: Set to any name you prefer (e.g., `Flump Plugin`).
    - **Main class**: Set to `com.flump.PluginLauncher`.
-   - **Use classpath of module**: Select your module (ensure it's using Java 11 (Temurin)).
+   - **Use classpath of module**: Select your module (ensure it's using Java 11 (Temurin)) and `example.test`.
    - **VM options**: Add `-ea` to enable assertions.
    - **Program arguments**: Add `--debug --developer-mode` to enable debugging and developer mode in RuneLite.
    - **Modify options**:
@@ -236,7 +236,7 @@ Since the project uses Gradle for building, follow these steps to build and run 
 
 ## **Contribution**
 
-At this time, the Flump Plugin is a personal project, and contributions are not being accepted. However, feedback and suggestions are welcome. Please feel free to reach out with suggestions.
+At this time, the Flump Plugin is a personal project, and contributions are not being accepted. However, feedback and suggestions are welcome.
 
 ## **License**
 
@@ -262,8 +262,6 @@ The Flump Plugin and its source code are the proprietary property of the owner. 
 For questions, suggestions, or feedback, please contact:
 
 - **GitHub**: [CameronGuthrie](https://github.com/CameronGuthrie)
-
-**Note**: Replace placeholders like `your.email@example.com` with your actual contact information.
 
 ## **Additional Notes**
 
