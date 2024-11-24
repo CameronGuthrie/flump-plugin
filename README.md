@@ -1,6 +1,6 @@
 # **Flump Plugin for RuneLite**
 
-[![Flump Plugin](https://i.ytimg.com/vi/Df1-nVvbUK0/maxresdefault.jpg?)](https://youtu.be/nVyczfVi7iM "OSRS Automation Plugin")
+[![Flump Plugin](https://i.ytimg.com/vi/nVyczfVi7iM/maxresdefault.jpg?)](https://youtu.be/nVyczfVi7iM "OSRS Automation Plugin")
 
 ## **Overview**
 
