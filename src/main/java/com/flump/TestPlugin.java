@@ -243,6 +243,26 @@ public class TestPlugin extends Plugin {
                 inventoryManager.mouseOver();
                 break;
             }
+            case "inventory-all": {
+                // Initialize inventory data
+                inventoryManager.scanInventory();
+                inventoryManager.randomInventoryLocations();
+
+                // Check if initialization was successful
+                if (inventoryManager.getInventoryItems() == null || inventoryManager.getInventoryItems().length == 0) {
+                    log.warn("Inventory is empty or not loaded.");
+                    return;
+                }
+
+                if (inventoryManager.getRandomInventoryPoints() == null || inventoryManager.getRandomInventoryPoints().length == 0) {
+                    log.warn("Random inventory points are not initialized.");
+                    return;
+                }
+
+                // Perform mouse over action for all inventory items
+                inventoryManager.mouseOverAll();
+                break;
+            }
             default:
                 break;
         }
