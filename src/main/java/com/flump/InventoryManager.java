@@ -79,7 +79,8 @@ public class InventoryManager {
         }
 
         Random rand = new Random();
-        int index = rand.nextInt(getInventoryItems().length);
+        //int index = rand.nextInt(getInventoryItems().length);
+        int index = rand.nextInt(getRandomInventoryPoints().length);
         mouseController.move(getRandomInventoryPoints()[index]);
     }
 
